@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeneradorVideo - Agnes AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo">
+      <span class="logo-icon">&#127916;</span>
+      <span class="logo-text">GeneradorVideo</span>
+      <span class="logo-badge">Agnes AI</span>
+    </div>
+    <button class="btn-cfg" id="btnConfig">&#9881; API Key</button>
+  </header>
+
+  <main>
+
+    <section class="upload-zone" id="uploadZone">
+      <div class="upload-inner" id="uploadInner">
+        <div class="upload-icon">&#128248;</div>
+        <p class="up-title">Arrastra tu foto aqui</p>
+        <p class="up-sub">o haz clic para seleccionar</p>
+        <p class="up-hint">JPG o PNG - Horizontal 16:9 recomendado</p>
+      </div>
+      <img id="imgPreview" class="img-preview hidden" alt="preview">
+      <button class="btn-cambiar hidden" id="btnCambiar">&#128260; Cambiar foto</button>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </section>
+
+    <section class="card">
+      <label class="lbl">&#127919; Describe el video</label>
+      <textarea id="promptInput" rows="3"
+        placeholder="Ej: Modelo corriendo con ropa deportiva azul, movimiento cinematico, luz natural..."></textarea>
+      <p class="hint">Puedes dejarlo vacio para usar el prompt automatico.</p>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>&#9881; Ajustes del video</summary>
+        <div class="settings">
+
+          <div class="setting-row">
+            <div>
+              <label>Duracion</label>
+              <span class="setting-desc">Cantidad de frames</span>
+            </div>
+            <select id="numFrames">
+              <option value="49">Corto - 49 frames (~4s)</option>
+              <option value="81" selected>Medio - 81 frames (~6s)</option>
+              <option value="121">Largo - 121 frames (~8s)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <label>Frames por segundo</label>
+              <span class="setting-desc">Velocidad de reproduccion</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="fps" min="8" max="24" value="16">
+              <span id="fpsVal">16</span>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <label>Resolucion</label>
+              <span class="setting-desc">Tamano del video</span>
+            </div>
+            <select id="resolucion">
+              <option value="480">480p - Rapido</option>
+              <option value="720" selected>720p - Recomendado</option>
+              <option value="1080">1080p - Lento pero HD</option>
+            </select>
+          </div>
+
+        </div>
+      </details>
+    </section>
+
+    <button class="btn-generar" id="btnGenerar" disabled>
+      &#10024; Generar Video con Agnes AI
+    </button>
+
+    <section class="card card-progress hidden" id="secProgress">
+      <div class="spinner"></div>
+      <p class="progress-txt" id="progressTxt">Iniciando...</p>
+      <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+      <p class="progress-hint">Agnes AI genera en la nube - tarda entre 1 y 4 minutos</p>
+    </section>
+
+    <section class="card card-result hidden" id="secResult">
+      <p class="result-tag">&#127881; Video listo con Agnes AI</p>
+      <video id="videoPlayer" controls autoplay loop playsinline></video>
+      <div class="result-btns">
+        <button class="btn-dl" id="btnDescargar">&#11015; Descargar MP4</button>
+        <button class="btn-nuevo" id="btnNuevo">&#128260; Nuevo video</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL API KEY -->
+<div class="overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>&#128273; API Key de Agnes AI</h3>
+      <button class="btn-close" id="btnClose">X</button>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <span class="n">1</span>
+        <p>Crea cuenta gratis en
+          <a href="https://platform.agnes-ai.com" target="_blank">platform.agnes-ai.com</a>
+          - sin tarjeta
+        </p>
+      </div>
+      <div class="step">
+        <span class="n">2</span>
+        <p>Ve a
+          <a href="https://platform.agnes-ai.com/settings/apiKeys" target="_blank">
+            Settings - API Keys - Create Key
+          </a>
+        </p>
+      </div>
+      <div class="step">
+        <span class="n">3</span>
+        <p>Pega tu token (empieza con <strong>sk-</strong>):</p>
+      </div>
+    </div>
+
+    <input type="password" id="keyInput" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx">
+
+    <div class="badges">
+      <span class="badge green">&#9989; 100% Gratis</span>
+      <span class="badge green">&#127916; Sin limite</span>
+      <span class="badge green">&#128683; Sin marca de agua</span>
+    </div>
+
+    <button class="btn-guardar" id="btnGuardar">&#128190; Guardar key</button>
+    <p class="security">&#128274; Tu key se guarda solo en tu navegador.</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
