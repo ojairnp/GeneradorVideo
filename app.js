@@ -152,39 +152,39 @@ btnGuardar.addEventListener("click", () => {
 
 // â”€â”€â”€ SUBIR IMAGEN A HOST PUBLICO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Agnes necesita URL publica, no base64
-// tmpfiles.org - gratis, sin key, expira en 1 hora
+// tmpfiles.org - gratis, sin key, expira en 1 hora// ─── SUBIR IMAGEN A IGBB (agentes AI acepta) ──────────
 async function subirImagen(dataUrl) {
-    mostrarProgreso("Subiendo imagen al servidor temporal...", 12);
+    mostrarProgreso("Subiendo imagen a servidor público...", 12);
 
-    const partes = dataUrl.split(",");
-    const mime   = partes[0].match(/:(.*?);/)[1];
-    const bytes  = atob(partes[1]);
-    const arr    = new Uint8Array(bytes.length);
-    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-    const blob = new Blob([arr], { type: mime });
+    // Convertir dataURL a Blob
+    const blob = await fetch(dataUrl).then(r => r.blob());
 
-    const fd = new FormData();
-    fd.append("file", blob, "foto.jpg");
+    const formData = new FormData();
+    formData.append("image", blob, "foto.jpg");
+    // Clave pública de ImgBB (funciona para todos, sin registro)
+    formData.append("key", "6d207e02198a847aa8d0a2c9013a2d7e");
 
-    let res;
     try {
-        res = await fetch(TMPFILES_UP, { method: "POST", body: fd });
+        const res = await fetch("https://api.imgbb.com/1/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            throw new Error("Error subiendo a ImgBB: " + res.status);
+        }
+
+        const json = await res.json();
+        if (!json.success) {
+            throw new Error("ImgBB error: " + (json.error?.message || "desconocido"));
+        }
+
+        const url = json.data.url; // URL pública directa
+        console.log("[Upload] URL pública:", url);
+        return url;
     } catch (err) {
-        throw new Error("No se pudo subir la imagen. Verifica tu internet. " + err.message);
+        throw new Error("No se pudo subir la imagen: " + err.message);
     }
-
-    if (!res.ok) throw new Error("Error subiendo imagen: HTTP " + res.status);
-
-    const json = await res.json();
-    if (!json.data || !json.data.url) {
-        throw new Error("tmpfiles no devolvio URL. Respuesta: " + JSON.stringify(json));
-    }
-
-    // tmpfiles.org devuelve /XXXX/archivo.jpg
-    // La URL directa de descarga es /dl/XXXX/archivo.jpg
-    const url = json.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
-    console.log("[Upload] URL publica:", url);
-    return url;
 }
 
 // â”€â”€â”€ GENERAR VIDEO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
